@@ -1,0 +1,41 @@
+name: Deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ACR_NAME: acrdglee0412
+  IMAGE_NAME: reservation-app
+  RESOURCE_GROUP: rg-reservation
+  CONTAINER_APP: app-reservation
+  CONTAINER_ENV: env-deploy-test
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Azure 로그인 (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: ACR 로그인
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      - name: 이미지 빌드 & 푸시
+        run: |
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} -f Reservation_API/Dockerfile Reservation_API
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      
+      - name: Container Apps 배포
+        run: az containerapp up --name ${{ env.CONTAINER_APP }} --resource-group ${{ env.RESOURCE_GROUP }} --environment ${{ env.CONTAINER_ENV }} --image ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} --target-port 8080 --ingress external --registry-server ${{ env.ACR_NAME }}.azurecr.io
