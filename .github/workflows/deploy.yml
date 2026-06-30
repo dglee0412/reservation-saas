@@ -34,7 +34,7 @@ jobs:
 
       - name: 이미지 빌드 & 푸시
         run: |
-          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} -f Reservation_API/Dockerfile Reservation_API
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} -f Dockerfile .
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
       
       - name: Container Apps 배포
