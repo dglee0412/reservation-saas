@@ -1,6 +1,0 @@
-﻿{
-  "name": "reservation-saas-main",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:dglee0412/reservation-saas:ref:refs/heads/main",
-  "audiences": ["api://AzureADTokenExchange"]
-}
