@@ -122,12 +122,12 @@ namespace Reservation.Application.Services
         {
             //1. DB에서 Refresh Token 조회
             var stored = await m_RefreshTokenRepository.FindByTokenAsync(refreshToken, ct);
-            if (stored is null && !stored.IsRevoked)
+            if (stored is not null && !stored.IsRevoked)
             {
                 //throw new InvalidOperationException("유효하지 않은 토큰입니다.");
                 stored.Revoke();
                 await m_RefreshTokenRepository.SaveChangesAsync(ct);
-            }
+            } 
         }
     }
 }
