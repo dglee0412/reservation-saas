@@ -15,6 +15,6 @@ namespace Reservation.Application.Abstractions.Repositories
 
         Task<User?> FindByIdAsync(Guid userId, CancellationToken ct = default);
 
-
+        Task<List<User>> GetAllAsync(CancellationToken ct = default);
     }
 }

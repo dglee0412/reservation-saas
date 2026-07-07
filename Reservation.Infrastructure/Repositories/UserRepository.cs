@@ -26,12 +26,17 @@ namespace Reservation.Infrastructure.Repositories
         public async Task<User?> FindByEmailAsync(string email, CancellationToken ct = default)
         {
             var normalized = email.Trim().ToLowerInvariant();
-            return await m_db.Users.FirstOrDefaultAsync(u => u.Email == normalized, ct);
+            return await m_db.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Email == normalized, ct);
         }
         
         public async Task<User?> FindByIdAsync(Guid userId, CancellationToken ct = default)
         {
-            return await m_db.Users.FirstOrDefaultAsync(u => u.Id == userId, ct);
+            return await m_db.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId, ct);
+        }
+
+        public async Task<List<User>> GetAllAsync(CancellationToken ct = default)
+        {
+            return await m_db.Users.ToListAsync(ct);
         }
     }
 }
